@@ -39,21 +39,26 @@ def web_search(query: str) -> str:
     Input should be a clear search query string.
     """
     try:
-        with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=4))
+        from googlesearch import search
+        import requests
+        from bs4 import BeautifulSoup
+
+        results = list(search(query, num_results=4, advanced=True))
+
         if not results:
             return "No results found. Try rephrasing."
+
         formatted = []
         for i, r in enumerate(results, 1):
             formatted.append(
-                f"Result {i}: {r['title']}\n"
-                f"Source: {r['href']}\n"
-                f"Summary: {r['body']}\n"
+                f"Result {i}: {r.title}\n"
+                f"Source: {r.url}\n"
+                f"Summary: {r.description}\n"
             )
         return "\n".join(formatted)
+
     except Exception as e:
         return f"Web search failed: {e}"
-
 
 @tool
 def wikipedia_search(topic: str) -> str:
